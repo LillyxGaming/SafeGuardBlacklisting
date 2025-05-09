@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Lookup - SafeGuard Blacklisting</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        html,
+        body {
+            height: 100%;
+            background: none;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: -1;
+            /* Ensure canvas is behind content */
+            display: block;
+        }
+
+        .content {
+            position: relative;
+            z-index: 0;
+            text-align: center;
+            background: none;
+            pointer-events: auto;
+            /* Ensure content is clickable */
+            padding-top: 120px;
+        }
+
+        .content h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .content p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .search-section {
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        .search-section input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border-radius: 8px;
+            border: 2px solid #74c1f8;
+            color: #333;
+            z-index: 2;
+            /* Ensure input is clickable */
+            position: relative;
+        }
+
+        .search-section button {
+            padding: 10px 20px;
+            background-color: #74c1f8;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+            color: white;
+            z-index: 2;
+            /* Ensure button is clickable */
+            position: relative;
+        }
+
+        .search-section button:hover {
+            background-color: #4f9bff;
+        }
+
+        .search-result {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+
+        .search-result.safe {
+            color: rgb(35, 223, 35);
+        }
+
+        .search-result.staff {
+            color: rgb(54, 187, 248);
+        }
+
+        .search-result.flagged {
+            color: rgb(250, 192, 83);
+        }
+
+        .search-result.blacklisted {
+            color: rgb(252, 65, 65);
+        }
+
+        .search-result-box {
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Dark background with some transparency */
+            border: 2px solid #74c1f8;
+            /* Border with your primary color */
+            border-radius: 10px;
+            /* Rounded corners */
+            padding: 50px;
+            /* Space inside the box */
+            max-width: 1000px;
+            /* Set a maximum width */
+            margin: 20px auto;
+            /* Center the box and add margin for spacing */
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+            /* Optional: Add a subtle shadow for depth */
+        }
+
+        .search-result-box h2 {
+            color: #ffffff;
+            /* Title color */
+            font-size: 24px;
+            /* Title size */
+            margin-bottom: 10px;
+            /* Space below the title */
+            text-decoration: underline;
+            
+        }
+
+        .search-result-box p {
+            color: white;
+            /* Text color */
+            font-size: 18px;
+            /* Text size */
+        }
+
+        /* Specific colors for each status */
+        .search-result-box.safe {
+            border-color: rgb(35, 223, 35);
+            /* Green border for Safe status */
+        }
+
+        .search-result-box.staff {
+            border-color: rgb(54, 187, 248);
+            /* Blue border for Staff status */
+        }
+
+        .search-result-box.flagged {
+            border-color: rgb(250, 192, 83);
+            /* Yellow border for Flagged status */
+        }
+
+        .search-result-box.blacklisted {
+            border-color: rgb(252, 65, 65) !important; 
+            /* Red border for Danger/Error */
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(46, 45, 45, 0.3);
+            z-index: 1;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+            margin-right: 5px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #74c1f8;
+        }
+
+        nav img {
+            height: 40px;
+            margin-right: auto;
+        }
+
+        nav .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        footer {
+            width: 100%;
+            background: rgba(46, 45, 45, 0.3);
+            color: white;
+            text-align: center;
+            padding: 15px 20px;
+            position: relative;
+            font-weight: bold;
+            margin-top: auto;
+            /* Ensures footer stays at the bottom */
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="background-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('background-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const lines = [];
+        const lineCount = 100;
+        const lineSpeed = 2;
+
+        function createLine() {
+            const y = Math.random() * canvas.height;
+            const width = Math.random() * 100 + 50;
+            const delay = Math.random() * 10000;
+            const brightness = Math.random() * 0.7 + 0.3;
+            setTimeout(() => {
+                lines.push({ x: -width, y, width });
+            }, delay);
+        }
+
+        function updateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            lines.forEach((line, index) => {
+                line.x += lineSpeed;
+                if (line.x > canvas.width) {
+                    lines.splice(index, 1);
+                    createLine();
+                }
+                ctx.fillStyle = '#01ffb380';
+                ctx.fillRect(line.x, line.y, line.width, 2);
+            });
+            requestAnimationFrame(updateLines);
+        }
+
+        for (let i = 0; i < lineCount; i++) {
+            createLine();
+        }
+
+        updateLines();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+ function checkUser() {
+    const userID = document.getElementById('userID').value;
+    const resultElement = document.getElementById('result');
+
+    // Send the user ID to the backend
+    fetch('/lookup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userID })  // Send the userID to the backend
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultElement = document.getElementById('result');
+        if (data.found) {
+            let boxClass = data.boxClass;  // Dynamically set the box class
+            resultElement.innerHTML = `
+                <div class="search-result-box ${boxClass}">
+                    <h2>UserID ${userID} is in our database</h2><br><br>
+                    <strong>User Information:</strong> ${data.cardTitle}<br>
+                    <strong>Description:</strong> ${data.description}
+                </div>
+            `;
+            console.log('Box class:', data.boxClass);  // Debug log
+        } else {
+            resultElement.innerHTML = `
+                <div class="search-result-box safe">
+                    <h2>UserID ${userID} is Safe</h2>
+                    <p>No record found.</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
+        resultElement.innerHTML = '<div class="search-result danger">Error fetching data</div>';
+    });
+}
+
+    </script>
+
+    <nav>
+        <img src="https://media-hosting.imagekit.io/594bd8b693d64ffd/053868bbe6749501b459b9e07776fbd2.png?Expires=1841355105&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CNuKh0LqxZOYIx1t4cBc3TCoZstxdIf3X5vAGzKglui8GK48pK93TRyjoFpedE~qpY~6iZcpNlJwefocs8pbXiwIQ8iJl9S2xPEmWHGtsKHicvbh6F4szlmB1Xmuv7QEARBYJ5Uz5Wdqypgz16-Ts3KbLXVdhue1rGMKQIH3E6UqYyN35PjbrB1baitnr8Gw4tYySj63h2HZgN6HkGY3Rv4hT1hpC1e9LBw6RjN~yO-Qv8AD6-l9ESR81Uzewrgv59WK1W2Oc3OIytyaBgG0Tenia4QaIvQpleo1qDv9Gf69xbyqZ2Mmuair4L5sYOkB3izD54B9RUOU2Em9O-bIJg__"
+            alt="Logo" />
+        <div class="title">SafeGuard Blacklisting</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="our-team.html">Our Team</a></li>
+            <li><a href="user-lookup.html">User Lookup</a></li>
+            <li><a href="#contact-us">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <img src="https://media-hosting.imagekit.io/594bd8b693d64ffd/053868bbe6749501b459b9e07776fbd2.png?Expires=1841355105&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CNuKh0LqxZOYIx1t4cBc3TCoZstxdIf3X5vAGzKglui8GK48pK93TRyjoFpedE~qpY~6iZcpNlJwefocs8pbXiwIQ8iJl9S2xPEmWHGtsKHicvbh6F4szlmB1Xmuv7QEARBYJ5Uz5Wdqypgz16-Ts3KbLXVdhue1rGMKQIH3E6UqYyN35PjbrB1baitnr8Gw4tYySj63h2HZgN6HkGY3Rv4hT1hpC1e9LBw6RjN~yO-Qv8AD6-l9ESR81Uzewrgv59WK1W2Oc3OIytyaBgG0Tenia4QaIvQpleo1qDv9Gf69xbyqZ2Mmuair4L5sYOkB3izD54B9RUOU2Em9O-bIJg__"
+            alt="Logo" />
+        <h1>User Lookup</h1>
+        <p>Enter the Discord User ID to check if it's in our database:</p>
+
+        <!-- User ID Lookup Section -->
+        <div class="search-section">
+            <input type="text" id="userID" placeholder="Enter Discord User ID" />
+            <button onclick="checkUser()">Search</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <footer>
+        <p>&copy; SafeGuard Blacklisting - Copyrighted 2025</p>
+    </footer>
+</body>
+
+</html>

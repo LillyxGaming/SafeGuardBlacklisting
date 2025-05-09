@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Team - SafeGuard Blacklisting</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: none;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            color: white;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: -1;
+            display: block;
+        }
+
+        .content {
+            position: relative;
+            z-index: 0;
+            text-align: center;
+            background: none;
+            pointer-events: none;
+            padding-top: 120px;
+        }
+
+        .content h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .content p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .team-section {
+            margin-top: 50px;
+            margin-bottom: 60px;
+        }
+
+        .team-section h2 {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+
+        .team-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .team-box {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 30px;
+            width: 250px;
+            box-shadow: 0 4px 20px rgba(1, 255, 179, 0.5);
+            text-align: center;
+        }
+
+        .team-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .team-box h3 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: white;
+        }
+
+        .team-box p {
+            font-size: 16px;
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(46, 45, 45, 0.3);
+            z-index: 1;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin-left: auto;
+            margin-right: 5px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #74c1f8;
+        }
+
+        nav img {
+            height: 40px;
+            margin-right: auto;
+        }
+
+        nav .title {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        footer {
+            width: 100%;
+            background: rgba(46, 45, 45, 0.3);
+            color: white;
+            text-align: center;
+            padding: 15px 20px;
+            position: relative;
+            bottom: 0;
+            z-index: 1;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="background-canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('background-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const lines = [];
+        const lineCount = 100;
+        const lineSpeed = 2;
+
+        function createLine() {
+            const y = Math.random() * canvas.height;
+            const width = Math.random() * 100 + 50;
+            const delay = Math.random() * 10000;
+            const brightness = Math.random() * 0.7 + 0.3;
+            setTimeout(() => {
+                lines.push({ x: -width, y, width });
+            }, delay);
+        }
+
+        function updateLines() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            lines.forEach((line, index) => {
+                line.x += lineSpeed;
+                if (line.x > canvas.width) {
+                    lines.splice(index, 1);
+                    createLine();
+                }
+                ctx.fillStyle = '#01ffb380';
+                ctx.fillRect(line.x, line.y, line.width, 2);
+            });
+            requestAnimationFrame(updateLines);
+        }
+
+        for (let i = 0; i < lineCount; i++) {
+            createLine();
+        }
+
+        updateLines();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+
+    <nav>
+        <img src="https://media-hosting.imagekit.io/594bd8b693d64ffd/053868bbe6749501b459b9e07776fbd2.png?Expires=1841355105&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CNuKh0LqxZOYIx1t4cBc3TCoZstxdIf3X5vAGzKglui8GK48pK93TRyjoFpedE~qpY~6iZcpNlJwefocs8pbXiwIQ8iJl9S2xPEmWHGtsKHicvbh6F4szlmB1Xmuv7QEARBYJ5Uz5Wdqypgz16-Ts3KbLXVdhue1rGMKQIH3E6UqYyN35PjbrB1baitnr8Gw4tYySj63h2HZgN6HkGY3Rv4hT1hpC1e9LBw6RjN~yO-Qv8AD6-l9ESR81Uzewrgv59WK1W2Oc3OIytyaBgG0Tenia4QaIvQpleo1qDv9Gf69xbyqZ2Mmuair4L5sYOkB3izD54B9RUOU2Em9O-bIJg__" alt="Logo" />
+        <div class="title">SafeGuard Blacklisting</div>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="our-team.html">Our Team</a></li>
+            <li><a href="user-lookup.html">User Lookup</a></li>
+            <li><a href="#contact-us">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        <img src="https://media-hosting.imagekit.io/594bd8b693d64ffd/053868bbe6749501b459b9e07776fbd2.png?Expires=1841355105&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=CNuKh0LqxZOYIx1t4cBc3TCoZstxdIf3X5vAGzKglui8GK48pK93TRyjoFpedE~qpY~6iZcpNlJwefocs8pbXiwIQ8iJl9S2xPEmWHGtsKHicvbh6F4szlmB1Xmuv7QEARBYJ5Uz5Wdqypgz16-Ts3KbLXVdhue1rGMKQIH3E6UqYyN35PjbrB1baitnr8Gw4tYySj63h2HZgN6HkGY3Rv4hT1hpC1e9LBw6RjN~yO-Qv8AD6-l9ESR81Uzewrgv59WK1W2Oc3OIytyaBgG0Tenia4QaIvQpleo1qDv9Gf69xbyqZ2Mmuair4L5sYOkB3izD54B9RUOU2Em9O-bIJg__"
+            alt="Logo" />
+        <h1>Our Team</h1>
+        <p>Meet the amazing individuals behind SafeGuard Blacklisting.</p>
+
+        <!-- Executives Section -->
+        <div class="team-section">
+            <h2>Executives</h2>
+            <div class="team-container">
+                <div class="team-box">
+                    <img src="https://media-hosting.imagekit.io/38889c6d651243cb/1cc6106ed4a0d276e2dbf3c400325851.png?Expires=1841356780&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=KOCJyRFQnxjdHBi-k7FwyOVDjNob~jzo-kEGKfQCEVvnX5M7kYRy0BNjgHkDQ7WUfDpoCiiTFWRyWu2zTVn0U8xrQzsp46DvYmIVoeeqZ5fIq6UgI7YmyOmgQY8kmtnOMBJi4lfm75k5asZMKu2xaXNBB8fLXwxXweYZ1LxTV9h0-vcQw5Ob5IP2hej2LX2OGXT70hE2byxaePO9LZAqsiJu5LaM6X4F-5NX3PWp2ueqrmTDMUshhQUfyWGCPg1VD1dTAD~f82VNdy-0KWyxMKyrX9XsdLkk-Xhe2MtOdsCm2qI5OxsMHo~qiUlTcAhklqtb9zD13jK0c7c33JijSg__" alt="Founder">
+                    <h3>Founder</h3>
+                    <p>Lilly x</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://media-hosting.imagekit.io/8d10c9a2e59c453c/723a687eebf25b2d77d9f3b396c169fe.png?Expires=1841356837&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=wqOR5GYyyvfrVH7pqSXt1ZbabQgHJnYeM2p-uBlCKS9A7y4udGUvGPgJBmuB~qsICdlER55FlZVw4TaObqAKXEZ2ZVMTjZeDOYV35vzzmVRs~YXNh8YEyAekZzNb9Z-93FFYfG0Z1ZKC4KhbRDapi~RPmqP1A8o7TM3WSAIZnIoTFmoVV6hlY3JDaSN~mW2WT67IqyidE4c5kcLPL8mM2QR1Jx37aHgTUgecwLBaDJcNWX~5fGZvyceXOkdwaP0l4F2bWeoiI2LBHLgR9aIFBo7L0eXUI~RuDQD1dnzO1hR0eQ-rwVahFFJi8jXt3BX0f6uLUUFFqcSjQZA0Rbfbdg__" alt="Co-Founder">
+                    <h3>Co-Founder</h3>
+                    <p>Joshua C</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" alt="Management Lead">
+                    <h3>Management Lead</h3>
+                    <p>N/A</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Team Section -->
+        <div class="team-section">
+            <h2>Management Team</h2>
+            <div class="team-container">
+                <div class="team-box">
+                    <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" alt="IA Manager">
+                    <h3>Internal Affairs Manager</h3>
+                    <p>N/A</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" alt="Moderation Manager">
+                    <h3>Moderation Manager</h3>
+                    <p>N/A</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://media-hosting.imagekit.io/534ece0d47a7488b/947ace6db0706bace9c7fae7b2b98ec5.png?Expires=1841357398&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=inviUPM9ML6lpv2C-Lqsm8zTZoLzhnESx1Jdj7V7XGmOXYPeY3LUFTqAAe~mON44vIp-Ls1scKrgvkozt8xZ2pgEKu7~Q-6W4R67P0OxKRGp7L4m5gN3mbc4sEMpU6vICFyYa0mWqcC0DOH71OphXgCQ8HWNZ8bCNkbjAHzq54KkRRyYuP66vSBQ5bWh021SuFpA4~SgPB1selupbMNfTGw3LAnGy7nSndjXj3aDkWpeHuW-fxAO01OhxG4Nec76nQK5-lJrr~85G7AlB-NGq~mWEuGdOakFQPzpZy5Q5HbA0Fhr8SMTmaSYCuTuGRS3TPQYJLy2YnAKa6BsjIjeTA__" alt="Blacklist Manager">
+                    <h3>Blacklist Manager</h3>
+                    <p>KyledaWolf</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://media-hosting.imagekit.io/2beda22f9b9f4855/f4938028754d1e79686dc89b12307e5a.png?Expires=1841357438&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=FVKjopkWVYNebEQn3x0XDTUJJGNHBMwUeq41jH~e2R8ZonuWdIdyzsPTfsVRrK1xrEfynZ-Ptpa0wAT~3NIvCc8NbnkG6c7~9LsRv6Lzj~47ZfafY6O8wzq1Qe96Ygih9SaL4IiMgZgfh81ZqJhtI5UaVTUy1mAeMdy5DB2nU~yNZ9om4xKekXk7Yzs4uFxs4qIsaSzb9m58HxtavFtWq8ZE2ibrPeQfs2xdVOM1XCHjhbHl5NqYPdcGZVqvi52YMhfQDd~KaFfyUi8YnyuD5VL0WElX9R2M2wqMBhSXbfwHmjVNLKy7xYipA9XRjRrFcF8ALMkzQFRYZcRQHUo2xg__" alt="SafeGuard Manager">
+                    <h3>SafeGuard Manager</h3>
+                    <p>ThatTSGCopper</p>
+                </div>
+                <div class="team-box">
+                    <img src="https://i.pinimg.com/originals/9e/83/75/9e837528f01cf3f42119c5aeeed1b336.jpg" alt="Support Manager">
+                    <h3>Support Manager</h3>
+                    <p>N/A</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; SafeGuard Blacklisting - Copyrighted 2025</p>
+    </footer>
+</body>
+
+</html>
