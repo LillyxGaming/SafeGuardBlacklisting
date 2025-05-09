@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "gh-pages -d public"
+    "deploy": "gh-pages -d public",
+    "start": "node index.html"
   },
   "homepage": "https://LillyxGaming.github.io/SafeGuardBlacklisting",
   "dependencies": {
